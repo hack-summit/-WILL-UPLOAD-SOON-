@@ -1,0 +1,108 @@
+#include <LiquidCrystal.h>
+const int watermeterPin = 2;
+
+volatile int  pulse_frequency;
+unsigned int  literperhour;
+unsigned long currentTime, loopTime;
+byte sensorInterrupt = 0;
+
+LiquidCrystal lcd(8, 3, 4, 5, 6, 7);
+int x, y;
+float z;
+void setup()
+{
+  pinMode(watermeterPin, INPUT);
+  pinMode(A5, OUTPUT);
+  pinMode(A4, OUTPUT);
+  Serial.begin(9600);
+  lcd.begin(16, 2);
+  lcd.clear();
+  attachInterrupt(sensorInterrupt, getFlow, FALLING);
+
+  currentTime = millis();
+  loopTime = currentTime;
+  digitalWrite(A5, HIGH);
+  digitalWrite(A4, HIGH);
+
+
+
+
+  lcd.clear();
+  lcd.print("WELCOME...");
+  lcd.setCursor(0, 1);
+  lcd.print("PLS WAIT...");
+
+  digitalWrite(A5, 1);
+  delay(1000);
+  digitalWrite(A5, 0);
+  delay(1000);
+  digitalWrite(A5, 1);
+  delay(1000);
+  digitalWrite(A5, 0);
+  delay(1000);
+  digitalWrite(A5, 1);
+  delay(1000);
+  digitalWrite(A5, 0);
+  delay(1000);
+  digitalWrite(A5, 1);
+  delay(1000);
+  digitalWrite(A5, 0);
+  delay(1000);
+  digitalWrite(A5, 1);
+
+}
+
+void loop ()
+{
+  digitalWrite(A5, 1);
+  currentTime = millis();
+  if (currentTime >= (loopTime + 1000))
+  {
+    loopTime = currentTime;
+    literperhour = (pulse_frequency * 60 / 7.5);
+    pulse_frequency = 0;
+
+    lcd.clear();
+    lcd.print("FLOW RATE: ");
+    // z=
+    lcd.print(literperhour, DEC);
+    lcd.setCursor(0, 1);
+
+    if ((literperhour, DEC) > 300 || literperhour > 300 )
+    {
+      x++;
+    }
+
+    if (x > 10)
+    {
+
+
+      lcd.clear();
+      lcd.print(" ALERT TODAY");
+      lcd.setCursor(0, 1);
+      lcd.print("LIMIT EXCEEDED");
+      delay(3000);
+      literperhour = 0;
+      x = 0;
+      digitalWrite(A5, LOW);
+      digitalWrite(A4, LOW);
+      delay(3000);
+      digitalWrite(A4, 1);
+    }
+    lcd.print("R- Water : ");
+    lcd.print(x);
+
+    lcd.print(" Lit");
+
+    delay(100);
+  }
+
+
+
+
+
+}
+void getFlow ()
+{
+  pulse_frequency++;
+}
